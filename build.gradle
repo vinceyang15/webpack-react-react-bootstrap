@@ -6,6 +6,13 @@ plugins {
 description = 'A trivial Gradle build'
 version = '1.0'
 
+release {
+  git {
+    requireBranch = 'develop'
+    pushToRemote = 'origin'
+    pushToBranchPrefix = 'release/'
+  }
+}
 
 task copy(type: Copy) {
   from 'app'
