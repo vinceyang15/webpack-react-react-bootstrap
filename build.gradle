@@ -4,22 +4,41 @@ plugins {
 }
 
 description = 'A trivial Gradle build'
-version = '1.0'
 
 release {
+  failOnCommitNeeded = false
+  failOnUpdateNeeded = false
+
   git {
     requireBranch = 'develop'
     pushToRemote = 'origin'
-    pushToBranchPrefix = 'release/'
   }
 }
 
-task copy(type: Copy) {
-  from 'app'
-  into 'dest'
+
+task destDir {
+  doLast {
+    mkdir('dest')
+  }
 }
 
-task zip(type: Zip) {
+task copy(dependsOn: destDir, type: Copy) {
+  from 'app'
+  into 'dest'
+
+  doLast {
+    copy {
+      from 'gradle.properties'
+      into 'dest'
+      rename ('gradle.properties', 'VERSION.txt')
+    }
+  }
+}
+
+
+task zip(dependsOn: copy, type: Tar) {
   from 'dest'
+  baseName = 'aim-auto-build-tool'
+  compression = Compression.GZIP
 }
 
